@@ -20,35 +20,12 @@ struct Client
 	socklen_t client_size;
 	int clientSocketID;
 	char username[1024];
-	//memset(&usrname,'\0',1024);
-
 };
 int numberofClients=1;
 
 struct Client clients[SOMAXCONN];
 int splitString(char *bs,char arr[1024][1024])
 {
-	/*int n=0;
-	int j=0;
-	for(int i=0;;i++)
-	{
-		if(bs[i]!=' ')
-		{
-			arr[n][j++]=bs[i];
-		}
-		else
-		{
-			arr[n][j++]='\0';
-			n++;
-			j=0;
-		}
-		if(bs[i]=='\0')
-		{
-			break;
-		}
-	}
-	return sizeof(arr)/sizeof(arr[0]);*/
-	//int i,j=0,ctr=0;
 	int i;
 	int j=0;
 	int ctr=0;
@@ -75,7 +52,6 @@ void * clientTask(void * mainclient)
 	{
 		char msg[1024];
 		int len;
-		//char *msg;
 		memset(&msg,'\0',1024);
 		int readstatus=recv(cl->clientSocketID,msg,1024,0);
 		if(readstatus==-1)
@@ -87,30 +63,13 @@ void * clientTask(void * mainclient)
 			char arr[1024][1024];
 			int t=splitString(msg,arr);
 			char finalmsg[1024];
-			//char *finalmsg;
 			strncpy(finalmsg,msg+2,strlen(msg)-1);
 			char sendingclient[1024];
-			//=cl->clientNo;
 			sprintf(sendingclient,"%d",cl->clientNo);
-			//sprintf(sendingclient,"%s",cl->username);
 			strcat(sendingclient,": ");
 			strcat(sendingclient,cl->username);
 			strcat(finalmsg," -message from client: ");
 			strcat(finalmsg,sendingclient);
-			//printf("%s",finalmsg);
-			//printf("%d",t);
-			/*for(int j=2;j<strlen(msg);j++)
-			{
-				strcat(finalmsg,msg[j]);
-			}*/
-			/*finalmsg[strlen(msg)-3]='\0';
-			for(int j=1;j<t;j++)
-			{
-				strcat(finalmsg,arr[j]);
-				strcat(finalmsg," ");
-			}*/
-			//printf("%s",finalmsg);
-			//printf("%s",finalmsg);
 			
 			if(strcmp("A",arr[0])==0)
 			{
@@ -133,7 +92,6 @@ void * clientTask(void * mainclient)
 				{
 					printf("wrong input\n");
 					char errmsg[1024];
-					//errmsg="wrong input";
 					strcpy(errmsg,"wrong input");
 					send(cl->clientSocketID,errmsg,1024,0);
 				}
@@ -141,7 +99,6 @@ void * clientTask(void * mainclient)
 				{
 					printf("wrong input\n");
 					char errmsg[1024];
-					//errmsg="wrong input";
 					strcpy(errmsg,"wrong input, cannot send a message to yourself");
 					send(cl->clientSocketID,errmsg,1024,0);
 				}
@@ -159,10 +116,8 @@ int main(int argc, char *argv[])
 	
 	/*Socket creation*/
 	int socketno;
-	//struct sockaddr_in sockname;
 	struct sockaddr_un sockname,remote;
 	int len;
-	//socketno = socket(AF_INET, SOCK_STREAM, 0);
 	socketno = socket(AF_UNIX, SOCK_STREAM, 0);
 	if(socketno==-1)
 	{
@@ -220,8 +175,6 @@ int main(int argc, char *argv[])
 			memset(&usrname,'\0',1024);
 			int rs=recv(cl,usrname,1024,0);
 			strcpy(clients[numberofClients-1].username,usrname);
-			//clients[numberofClients-1].username=usrname;
-			//clients[numberofClients-1].username=recv(cl,)
 		}
 		pthread_create(&client_threads[numberofClients-1],NULL,clientTask,(void *) &clients[numberofClients-1]);
 		clients[numberofClients-1].clientNo=numberofClients;
