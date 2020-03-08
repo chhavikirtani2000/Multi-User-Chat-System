@@ -73,7 +73,7 @@ int main(){
 	pthread_create(&clientthread, NULL, clientserverTask, (void *) &cs);
 	send(cs,nameinp,1024,0);
 
-	while(1)
+	while(1)//managing the sending message to other clients task
 	{
 
 		char *input=malloc(1024);
