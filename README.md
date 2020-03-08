@@ -1,5 +1,8 @@
 # Multi-User-Chat-System
-Compilation and Testing: Use the cd command to go to the directory Makefile, serverftry.c and clientftry.c files are located. 
+This is a multi user chat system which connects multiple clients to a server which facilitates message passing amongst clients.
+This particular code works on a single system. Will upload a chat system which would run on different systems connecting them via IP address
+Compilation and Testing: 
+Use the cd command to go to the directory Makefile, serverftry.c and clientftry.c files are located. 
 Use the make command to compile both the files.  
 Run the serverftry.c file by typing ./serverftry. 
 Run the clientftry.c file by typing ./clientftry. 
