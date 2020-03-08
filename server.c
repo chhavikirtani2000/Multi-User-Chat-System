@@ -1,3 +1,8 @@
+/*Code for server
+One terminal will be fixed to run the server code
+*/
+/*Note that this chat system will run only on one machine with multiple terminals representing multiple clients*/
+/* to make this as a chat system running over different computers, we need Ip connections, will upload code for that soon!*/
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
@@ -10,9 +15,10 @@
 #include <arpa/inet.h>
 #include <errno.h>
 #include <sys/un.h>
-#define SOCK_PATH "chhavik_chat_system"
+#define SOCK_PATH "chhavik_chat_system"//specifies the port
 #define LOCK_PATH "locksys"
 pthread_t client_threads[SOMAXCONN];
+/*Structure storing client details, will use this to access all clients currently connected to server*/
 struct Client
 {
 	int clientNo;
@@ -21,31 +27,31 @@ struct Client
 	int clientSocketID;
 	char username[1024];
 };
-int numberofClients=1;
+int numberofClients=1;//initially the number of clients
 
-struct Client clients[SOMAXCONN];
-int splitString(char *bs,char arr[1024][1024])
+struct Client clients[SOMAXCONN];//array of type Client storing all the clients
+int splitString(char *bs,char arr[1024][1024])//help function to split string based on spaces
 {
 	int i;
 	int j=0;
 	int ctr=0;
-    for(i=0;i<=(strlen(bs));i++)
-    {
-        if(bs[i]==' '||bs[i]=='\0')
-        {
-            arr[ctr][j]='\0';
-            ctr++;  
-            j=0;    
-        }
-        else
-        {
-            arr[ctr][j]=bs[i];
-            j++;
-        }
-    }
-    return ctr;
+	for(i=0;i<=(strlen(bs));i++)
+	{
+		if(bs[i]==' '||bs[i]=='\0')
+		{
+		    arr[ctr][j]='\0';
+		    ctr++;  
+		    j=0;    
+		}
+		else
+		{
+		    arr[ctr][j]=bs[i];
+		    j++;
+		}
+    	}
+    	return ctr;
 }
-void * clientTask(void * mainclient)
+void * clientTask(void * mainclient) //function each thread runs
 {
 	struct Client* cl=(struct Client*) mainclient;
 	while(1)
@@ -132,7 +138,7 @@ int main(int argc, char *argv[])
 	sockname.sun_family = AF_UNIX;
 	strcpy(sockname.sun_path,SOCK_PATH);
 	len = strlen(sockname.sun_path)+sizeof(sockname.sun_family);
-
+	/*Below is to avoid the error occuring due to socket being in occupied */
 	int lockfd=open(LOCK_PATH, O_RDONLY|O_CREAT,0600);
 	if(lockfd==-1)
 	{
@@ -176,7 +182,7 @@ int main(int argc, char *argv[])
 			int rs=recv(cl,usrname,1024,0);
 			strcpy(clients[numberofClients-1].username,usrname);
 		}
-		pthread_create(&client_threads[numberofClients-1],NULL,clientTask,(void *) &clients[numberofClients-1]);
+		pthread_create(&client_threads[numberofClients-1],NULL,clientTask,(void *) &clients[numberofClients-1]);//creating thread for new client
 		clients[numberofClients-1].clientNo=numberofClients;
 		numberofClients=numberofClients+1;
 
